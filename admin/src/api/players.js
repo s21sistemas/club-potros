@@ -13,6 +13,8 @@ import {
 } from 'firebase/firestore'
 import { db } from './db/firebaseConfig'
 import dayjs from 'dayjs'
+import { obtenerCostoTemporada } from './costos-jugador'
+import { toast } from 'sonner'
 
 const jugadoresCollection = collection(db, 'jugadores')
 const pagosCollection = collection(db, 'pagos_jugadores')
@@ -133,6 +135,19 @@ const createPagoJugador = async (
   const actuallyDate = dayjs()
   const dateWeek = actuallyDate.add(1, 'week').format('YYYY/MM/DD')
 
+  const costosTemporada = await obtenerCostoTemporada(temporadaId)
+
+  if (costosTemporada.length === 0) {
+    toast.warning(
+      'No se encontraron costos para esta temporada. Se usarán valores por defecto.'
+    )
+  }
+
+  const costoInscripcion = parseFloat(costosTemporada[0]?.inscripcion) || 500
+  const costoEquipamiento = parseFloat(costosTemporada[0]?.equipamiento) || 500
+  const costoPesaje = parseFloat(costosTemporada[0]?.pesaje) || 500
+  const montoTotal = costoInscripcion + costoEquipamiento + costoPesaje
+
   const pagosIniciales = {
     jugadorId,
     nombre: nombreJugador,
@@ -145,8 +160,8 @@ const createPagoJugador = async (
         descuento: '0',
         estatus: 'pendiente',
         fecha_pago: null,
-        submonto: 500,
-        monto: 500,
+        submonto: costoInscripcion,
+        monto: costoInscripcion,
         prorroga: false,
         fecha_limite: dateWeek,
         metodo_pago: null,
@@ -159,7 +174,7 @@ const createPagoJugador = async (
         estatus: 'pendiente',
         fecha_pago: null,
         fecha_limite: null,
-        monto: 500,
+        monto: costoEquipamiento,
         metodo_pago: null,
         abono: 'NO',
         abonos: [],
@@ -169,7 +184,7 @@ const createPagoJugador = async (
         tipo: 'Pesaje',
         estatus: 'pendiente',
         fecha_pago: null,
-        monto: 500,
+        monto: costoPesaje,
         metodo_pago: null,
         abono: 'NO',
         abonos: [],
@@ -177,8 +192,8 @@ const createPagoJugador = async (
       }
     ],
     monto_total_pagado: 0,
-    monto_total_pendiente: 2000,
-    monto_total: 2000,
+    monto_total_pendiente: montoTotal,
+    monto_total: montoTotal,
     fecha_registro: actuallyDate.format('YYYY-MM-DD')
   }
 

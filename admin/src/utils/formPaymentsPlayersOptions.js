@@ -97,7 +97,7 @@ export const formOptions = {
     {
       required: false,
       type: 'date',
-      label: 'Fecha del último pago (si no se ha pagado, dejar vacía)',
+      label: 'Fecha de pago (si no se ha pagado, dejar vacía)',
       name: 'fecha_pago'
     },
     {

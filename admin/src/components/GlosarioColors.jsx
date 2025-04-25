@@ -7,14 +7,8 @@ export const GlosarioColors = () => {
           <p className='text-sm'>Está pagado.</p>
         </div>
         <div className='flex gap-2 items-center'>
-          <div className='w-5 h-5 bg-[#e89b0b] rounded-full'></div>
-          <p className='text-sm'>
-            Está pendiente pero dentro del rango de fechas.
-          </p>
-        </div>
-        <div className='flex gap-2 items-center'>
           <div className='w-5 h-5 bg-red-600/80 rounded-full'></div>
-          <p className='text-sm'>Está pendiente y/o pasó la fecha limite.</p>
+          <p className='text-sm'>Está pendiente de pago.</p>
         </div>
       </div>
     </div>
