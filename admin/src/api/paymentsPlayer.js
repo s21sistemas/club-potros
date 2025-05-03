@@ -7,11 +7,13 @@ import {
   onSnapshot,
   getDocs,
   query,
-  where
+  where,
+  getDoc
 } from 'firebase/firestore'
 import { db } from './db/firebaseConfig'
 import dayjs from 'dayjs'
 import { createCaja } from './caja'
+import { removePlayer } from './players'
 
 const pagosCollection = collection(db, 'pagos_jugadores')
 
@@ -87,6 +89,35 @@ export const getPagosJugadoresTempCat = async (temporadaId, categoria) => {
   } catch (error) {
     console.error('Error al obtener porristas:', error)
     return []
+  }
+}
+
+export const getPaymentById = async (id) => {
+  try {
+    const docRef = doc(db, 'pagos_jugadores', id)
+    const docSnap = await getDoc(docRef)
+
+    const payment = docSnap.data()
+    return {
+      ...payment,
+      id: docSnap.id
+    }
+  } catch (error) {
+    console.error('Error al obtener el jugador:', error)
+    return null
+  }
+}
+
+export const getPaymentByJugadorId = async (id) => {
+  try {
+    const snapshot = await getDocs(
+      query(pagosCollection, where('jugadorId', '==', id))
+    )
+
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  } catch (error) {
+    console.error('Error al obtener el jugador:', error)
+    return null
   }
 }
 
@@ -259,6 +290,18 @@ export const updatePayment = async (id, data) => {
 
 // Eliminar un pago
 export const removePayment = async (id) => {
+  try {
+    const data = await getPaymentById(id)
+    await removePlayer(data.jugadorId)
+
+    const dataRef = doc(db, 'pagos_jugadores', id)
+    await deleteDoc(dataRef)
+  } catch (error) {
+    console.error('Error al eliminar pago:', error)
+  }
+}
+
+export const removePaymentByPlayer = async (id) => {
   try {
     const dataRef = doc(db, 'pagos_jugadores', id)
     await deleteDoc(dataRef)

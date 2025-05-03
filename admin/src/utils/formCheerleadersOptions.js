@@ -81,7 +81,7 @@ export const formOptions = {
       required: true,
       type: 'file',
       label: 'CURP de la porrista (PDF)',
-      name: 'curp_jugador',
+      name: 'curp',
       accept: 'application/pdf'
     },
     {

@@ -132,16 +132,18 @@ export const FormPaymentsPlayers = () => {
           <>
             <AlertaCard text='Abonos de inscripción' />
 
-            {formData.pagos[0].abonos.map((abono, index) => (
-              <>
+            {formData.pagos[0].abonos.map((abono) => (
+              <div
+                className='sm:grid-cols-1 md:col-span-2'
+                key={crypto.randomUUID()}
+              >
                 <CardAbonos
-                  key={index}
                   amount={abono.cantidad}
                   date={abono.fecha}
                   method={abono.metodo}
                 />
-                <hr className='sm:grid-cols-3 gap-2 md:col-span-2' />
-              </>
+                <hr className='mt-6 sm:grid-cols-3 gap-2 md:col-span-2' />
+              </div>
             ))}
           </>
         )}
@@ -220,16 +222,18 @@ export const FormPaymentsPlayers = () => {
           <>
             <AlertaCard text='Abonos de equipamiento' />
 
-            {formData.pagos[1].abonos.map((abono, index) => (
-              <>
+            {formData.pagos[1].abonos.map((abono) => (
+              <div
+                className='sm:grid-cols-1 md:col-span-2'
+                key={crypto.randomUUID()}
+              >
                 <CardAbonos
-                  key={index}
                   amount={abono.cantidad}
                   date={abono.fecha}
                   method={abono.metodo}
                 />
-                <hr className='sm:grid-cols-3 gap-2 md:col-span-2' />
-              </>
+                <hr className='mt-6 sm:grid-cols-3 gap-2 md:col-span-2' />
+              </div>
             ))}
           </>
         )}
@@ -308,16 +312,18 @@ export const FormPaymentsPlayers = () => {
           <>
             <AlertaCard text='Abonos de pesaje' />
 
-            {formData.pagos[2].abonos.map((abono, index) => (
-              <>
+            {formData.pagos[2].abonos.map((abono) => (
+              <div
+                className='sm:grid-cols-1 md:col-span-2'
+                key={crypto.randomUUID()}
+              >
                 <CardAbonos
-                  key={index}
                   amount={abono.cantidad}
                   date={abono.fecha}
                   method={abono.metodo}
                 />
-                <hr className='sm:grid-cols-3 gap-2 md:col-span-2' />
-              </>
+                <hr className='mt-6 sm:grid-cols-3 gap-2 md:col-span-2' />
+              </div>
             ))}
           </>
         )}

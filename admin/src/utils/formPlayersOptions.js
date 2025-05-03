@@ -157,7 +157,7 @@ export const formOptions = {
       required: false,
       type: 'file',
       label: 'CURP del jugador (PDF)',
-      name: 'curp_jugador',
+      name: 'curp',
       accept: 'application/pdf'
     },
     {

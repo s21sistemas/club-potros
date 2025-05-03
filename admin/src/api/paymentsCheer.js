@@ -4,11 +4,16 @@ import {
   updateDoc,
   deleteDoc,
   doc,
-  onSnapshot
+  onSnapshot,
+  getDoc,
+  getDocs,
+  where,
+  query
 } from 'firebase/firestore'
 import { db } from './db/firebaseConfig'
 import dayjs from 'dayjs'
 import { createCaja } from './caja'
+import { removeCheerleader } from './cheerleader'
 
 const pagosCollection = collection(db, 'pagos_porristas')
 
@@ -48,8 +53,38 @@ export const getPayments = async (callback) => {
         ...doc.data()
       }
     })
+
     callback(data)
   })
+}
+
+export const getPaymentById = async (id) => {
+  try {
+    const docRef = doc(db, 'pagos_porristas', id)
+    const docSnap = await getDoc(docRef)
+
+    const payment = docSnap.data()
+    return {
+      ...payment,
+      id: docSnap.id
+    }
+  } catch (error) {
+    console.error('Error al obtener el jugador:', error)
+    return null
+  }
+}
+
+export const getPaymentByPorristaId = async (id) => {
+  try {
+    const snapshot = await getDocs(
+      query(pagosCollection, where('porristaId', '==', id))
+    )
+
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  } catch (error) {
+    console.error('Error al obtener el jugador:', error)
+    return null
+  }
 }
 
 // Actualizar un pago
@@ -124,7 +159,7 @@ export const updatePayment = async (id, data) => {
     }
 
     const hoy = dayjs().format('YYYY-MM-DD')
-    if (inscripcion === 'pagado') {
+    if (inscripcion.estatus === 'pagado') {
       const inscripcionPago = {
         jugadorId: dataEstatus.porristaId,
         nombre: dataEstatus.nombre,
@@ -137,7 +172,7 @@ export const updatePayment = async (id, data) => {
       await createCaja(inscripcionPago)
     }
 
-    if (coach === 'pagado') {
+    if (coach.estatus === 'pagado') {
       const coachPago = {
         jugadorId: dataEstatus.porristaId,
         nombre: dataEstatus.nombre,
@@ -171,6 +206,18 @@ export const updatePayment = async (id, data) => {
 
 // Eliminar un pago
 export const removePayment = async (id) => {
+  try {
+    const data = await getPaymentById(id)
+    await removeCheerleader(data.porristaId)
+
+    const dataRef = doc(db, 'pagos_porristas', id)
+    await deleteDoc(dataRef)
+  } catch (error) {
+    console.error('Error al eliminar pago:', error)
+  }
+}
+
+export const removePaymentByCheer = async (id) => {
   try {
     const dataRef = doc(db, 'pagos_porristas', id)
     await deleteDoc(dataRef)

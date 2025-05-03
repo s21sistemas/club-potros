@@ -553,8 +553,8 @@ export const useReports = () => {
         'Fecha límite',
         'Fecha de registro'
       ],
-      'Reporte de pagos de equipamiento',
-      `Reporte_pagos_equipamiento_${dayjs().format('DD-MM-YYYY')}.xlsx`
+      'Reporte de pagos de equipo',
+      `Reporte_pagos_equipo_${dayjs().format('DD-MM-YYYY')}.xlsx`
     )
   }
 
