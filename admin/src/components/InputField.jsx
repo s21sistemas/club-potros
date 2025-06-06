@@ -153,6 +153,7 @@ export const InputField = ({
             id={name}
             value={value || ''}
             min={type === 'number' ? 0 : undefined}
+            step={type === 'number' ? '0.01' : undefined}
             onChange={(e) => {
               if (type === 'number') {
                 const v = parseFloat(e.target.value)

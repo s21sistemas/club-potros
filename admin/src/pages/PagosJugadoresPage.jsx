@@ -10,8 +10,8 @@ import { useAuth } from '../hooks/useAuth'
 
 const columns = [
   { key: 'inscripcion', name: 'Inscripción' },
-  { key: 'equipamiento', name: 'Equipamiento' },
   { key: 'pesaje', name: 'Pesaje' },
+  { key: 'primera_jornada', name: 'Primera jornada' },
   { key: 'nombre', name: 'Jugador' },
   { key: 'fecha_inscripcion', name: 'Fecha de inscripción' }
 ]

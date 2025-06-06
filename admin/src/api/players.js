@@ -176,9 +176,10 @@ const createPagoJugador = async (
   }
 
   const costoInscripcion = parseFloat(costosTemporada[0]?.inscripcion) || 500
-  const costoEquipamiento = parseFloat(costosTemporada[0]?.equipamiento) || 500
+  const costoPrimeraJornada =
+    parseFloat(costosTemporada[0]?.primera_jornada) || 500
   const costoPesaje = parseFloat(costosTemporada[0]?.pesaje) || 500
-  const montoTotal = costoInscripcion + costoEquipamiento + costoPesaje
+  const montoTotal = costoInscripcion + costoPrimeraJornada + costoPesaje
 
   const pagosIniciales = {
     jugadorId,
@@ -202,11 +203,11 @@ const createPagoJugador = async (
         total_abonado: 0
       },
       {
-        tipo: 'Equipamiento',
+        tipo: 'Primera jornada',
         estatus: 'pendiente',
         fecha_pago: null,
         fecha_limite: null,
-        monto: costoEquipamiento,
+        monto: costoPrimeraJornada,
         metodo_pago: null,
         abono: 'NO',
         abonos: [],

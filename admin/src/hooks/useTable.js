@@ -63,14 +63,14 @@ export const useTable = () => {
 
     if (pathname === '/pagos-jugadores' || pathname === '/pagos-porristas') {
       const abonoIns = item.pagos[0]?.abonos?.length
-      const abonoEquipa = item.pagos[1]?.abonos?.length
+      const abonoPrimera = item.pagos[1]?.abonos?.length
       const abonoPesaje = item.pagos[2]?.abonos?.length
 
       if (columnKey === 'inscripcion' && abonoIns > 0) {
         return 'bg-gradient-to-r from-[#e89b0b] to-red-500'
       }
 
-      if (columnKey === 'equipamiento' && abonoEquipa > 0) {
+      if (columnKey === 'primera_jornada' && abonoPrimera > 0) {
         return 'bg-gradient-to-r from-[#e89b0b] to-red-500'
       }
 

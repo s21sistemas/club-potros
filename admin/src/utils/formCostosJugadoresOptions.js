@@ -23,8 +23,8 @@ export const formOptions = {
       required: true,
       type: 'number',
       step: '0.01',
-      label: 'Costo de equipamiento *',
-      name: 'equipamiento'
+      label: 'Costo de primera jornada *',
+      name: 'primera_jornada'
     },
     {
       required: true,

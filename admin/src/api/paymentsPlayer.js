@@ -51,7 +51,8 @@ export const getPayments = async (callback) => {
         fecha_limite: pagos.find((p) => p.tipo === 'Inscripción')?.fecha_limite,
         inscripcion: pagos.find((p) => p.tipo === 'Inscripción')?.estatus,
         pesaje: pagos.find((p) => p.tipo === 'Pesaje')?.estatus,
-        equipamiento: pagos.find((p) => p.tipo === 'Equipamiento')?.estatus,
+        primera_jornada: pagos.find((p) => p.tipo === 'Primera jornada')
+          ?.estatus,
         fecha_inscripcion,
         ...doc.data()
       }
@@ -164,7 +165,7 @@ export const updatePayment = async (id, data) => {
     // DATAS
     const inscripcion = data.pagos.find((p) => p.tipo === 'Inscripción')
     const pesaje = data.pagos.find((p) => p.tipo === 'Pesaje')
-    const equipamiento = data.pagos.find((p) => p.tipo === 'Equipamiento')
+    const primera_jornada = data.pagos.find((p) => p.tipo === 'Primera jornada')
 
     if (newData.cambiar_inscripcion) {
       newData.cambio_inscripcion = newData.cambiar_inscripcion
@@ -244,43 +245,43 @@ export const updatePayment = async (id, data) => {
       await createCaja(pesajePagoCaja)
     }
 
-    // Abono de equipamiento
-    if (equipamiento.abono === 'SI') {
-      if (!Array.isArray(equipamiento.abonos)) equipamiento.abonos = []
+    // Abono de primera jornada
+    if (primera_jornada.abono === 'SI') {
+      if (!Array.isArray(primera_jornada.abonos)) primera_jornada.abonos = []
 
-      equipamiento.abonos.push({
-        cantidad: data.cantidad_abono_equipamiento,
-        fecha: data.fecha_abono_equipamiento,
-        metodo: data.metodo_pago_abono_equipamiento
+      primera_jornada.abonos.push({
+        cantidad: data.cantidad_abono_primera_jornada,
+        fecha: data.fecha_abono_primera_jornada,
+        metodo: data.metodo_pago_abono_primera_jornada
       })
 
-      equipamiento.total_abonado =
-        parseFloat(data.cantidad_abono_equipamiento) +
-        parseFloat(equipamiento.total_abonado || 0)
+      primera_jornada.total_abonado =
+        parseFloat(data.cantidad_abono_primera_jornada) +
+        parseFloat(primera_jornada.total_abonado || 0)
 
-      equipamiento.abono = 'NO'
+      primera_jornada.abono = 'NO'
 
       if (
-        parseFloat(equipamiento.total_abonado) ===
-        parseFloat(equipamiento.monto)
+        parseFloat(primera_jornada.total_abonado) ===
+        parseFloat(primera_jornada.monto)
       ) {
-        equipamiento.estatus = 'pagado'
-        equipamiento.fecha_pago = data.fecha_abono_equipamiento
-        equipamiento.metodo_pago = data.metodo_pago_abono_equipamiento
-        equipamiento.total_restante = 0
+        primera_jornada.estatus = 'pagado'
+        primera_jornada.fecha_pago = data.fecha_abono_primera_jornada
+        primera_jornada.metodo_pago = data.metodo_pago_abono_primera_jornada
+        primera_jornada.total_restante = 0
       }
 
       // Abonos en caja
-      const equipamientoPagoCaja = {
+      const primeraJornadaPagoCaja = {
         jugadorId: data.jugadorId,
         nombre: data.nombre,
         tabla: 'Jugador',
-        concepto: 'Pago de equipamiento (abono)',
-        fecha_pago: data.fecha_abono_equipamiento || hoy,
-        total: data.cantidad_abono_equipamiento || 0,
-        metodo_pago: data.metodo_pago_abono_equipamiento || null
+        concepto: 'Pago de primera jornada (abono)',
+        fecha_pago: data.fecha_abono_primera_jornada || hoy,
+        total: data.cantidad_abono_primera_jornada || 0,
+        metodo_pago: data.metodo_pago_abono_primera_jornada || null
       }
-      await createCaja(equipamientoPagoCaja)
+      await createCaja(primeraJornadaPagoCaja)
     }
 
     // Guardar pago en caja
@@ -320,25 +321,25 @@ export const updatePayment = async (id, data) => {
       await createCaja(pesjaePago)
     }
 
-    if (equipamiento.estatus === 'pagado') {
-      equipamiento.total_restante = 0
+    if (primera_jornada.estatus === 'pagado') {
+      primera_jornada.total_restante = 0
 
-      const equipamientoPago = {
+      const primeraJornadaPago = {
         jugadorId: dataEstatus.jugadorId,
         nombre: dataEstatus.nombre,
         tabla: 'Jugador',
-        concepto: 'Pago de equipamiento',
-        fecha_pago: equipamiento.fecha_pago || hoy,
-        total: equipamiento.monto || 0,
-        metodo_pago: equipamiento.metodo_pago || null
+        concepto: 'Pago de primeraJornada',
+        fecha_pago: primera_jornada.fecha_pago || hoy,
+        total: primera_jornada.monto || 0,
+        metodo_pago: primera_jornada.metodo_pago || null
       }
-      await createCaja(equipamientoPago)
+      await createCaja(primeraJornadaPago)
     }
 
     delete newData.cambiar_inscripcion
 
     delete newData.jugador
-    delete newData.equipamiento
+    delete newData.primera_jornada
     delete newData.inscripcion
     delete newData.prorroga
     delete newData.pesaje
@@ -348,9 +349,9 @@ export const updatePayment = async (id, data) => {
     delete newData.fecha_abono_ins
     delete newData.metodo_pago_abono_ins
 
-    delete newData.cantidad_abono_equipamiento
-    delete newData.fecha_abono_equipamiento
-    delete newData.metodo_pago_abono_equipamiento
+    delete newData.cantidad_abono_primera_jornada
+    delete newData.fecha_abono_primera_jornada
+    delete newData.metodo_pago_abono_primera_jornada
 
     delete newData.cantidad_abono_pesaje
     delete newData.fecha_abono_pesaje

@@ -174,100 +174,6 @@ export const FormPaymentsPlayers = ({ user }) => {
           </>
         )}
 
-        <AlertaCard text='Pago de equipamiento' />
-        {formOptions.equipamientoFields.map(
-          ({ type, label, name, required, opcSelect }) => (
-            <InputField
-              key={name}
-              type={type}
-              label={label}
-              required={
-                formData.pagos?.[1]?.estatus === 'pagado' ? true : required
-              }
-              opcSelect={opcSelect}
-              name={`pagos.1.${name}`}
-              value={formData.pagos?.[1]?.[name] ?? ''}
-              onChange={handleNestedInputChange}
-              disabled={
-                ['total_abonado', 'monto', 'total_restante'].includes(name) ||
-                (formData.pagos?.[1]?.total_abonado >=
-                  formData.pagos?.[1]?.monto &&
-                  name === 'abono') ||
-                (formData.pagos?.[1]?.estatus === 'pagado' &&
-                  name !== 'estatus' &&
-                  name !== 'fecha_pago' &&
-                  name !== 'metodo_pago')
-                  ? true
-                  : view
-              }
-            />
-          )
-        )}
-
-        {formData.pagos?.[1]?.abono === 'SI' && (
-          <>
-            <InputField
-              type='number'
-              label='Cantidad abonada *'
-              required={true}
-              name='cantidad_abono_equipamiento'
-              value={formData.cantidad_abono_equipamiento ?? ''}
-              onChange={handleInputChange}
-              disabled={formData.pagos?.[1]?.estatus === 'pagado' ? true : view}
-            />
-
-            <InputField
-              type='date'
-              label='Fecha del abono *'
-              required={true}
-              name='fecha_abono_equipamiento'
-              value={formData.fecha_abono_equipamiento ?? ''}
-              onChange={handleInputChange}
-              disabled={formData.pagos?.[1]?.estatus === 'pagado' ? true : view}
-            />
-
-            <InputField
-              type='select'
-              label='Método de pago *'
-              required={true}
-              name='metodo_pago_abono_equipamiento'
-              value={formData.metodo_pago_abono_equipamiento ?? ''}
-              opcSelect={[
-                { value: '', label: 'Selecciona una opción' },
-                {
-                  value: 'transferencia bancaria',
-                  label: 'Transferencia bancaria'
-                },
-                { value: 'tarjeta', label: 'Tarjeta de crédito/débito' },
-                { value: 'efectivo', label: 'Efectivo' },
-                { value: 'cheques', label: ' Cheques' }
-              ]}
-              onChange={handleInputChange}
-              disabled={formData.pagos?.[1]?.estatus === 'pagado' ? true : view}
-            />
-          </>
-        )}
-
-        {formData.pagos?.[1]?.abonos?.length > 0 && (
-          <>
-            <AlertaCard text='Abonos de equipamiento' />
-
-            {formData.pagos[1].abonos.map((abono) => (
-              <div
-                className='sm:grid-cols-1 md:col-span-2'
-                key={crypto.randomUUID()}
-              >
-                <CardAbonos
-                  amount={abono.cantidad}
-                  date={abono.fecha}
-                  method={abono.metodo}
-                />
-                <hr className='mt-6 sm:grid-cols-3 gap-2 md:col-span-2' />
-              </div>
-            ))}
-          </>
-        )}
-
         <AlertaCard text='Pago de pesaje' />
         {formOptions.pesajeFields.map(
           ({ type, label, name, required, opcSelect }) => (
@@ -347,6 +253,100 @@ export const FormPaymentsPlayers = ({ user }) => {
             <AlertaCard text='Abonos de pesaje' />
 
             {formData.pagos[2].abonos.map((abono) => (
+              <div
+                className='sm:grid-cols-1 md:col-span-2'
+                key={crypto.randomUUID()}
+              >
+                <CardAbonos
+                  amount={abono.cantidad}
+                  date={abono.fecha}
+                  method={abono.metodo}
+                />
+                <hr className='mt-6 sm:grid-cols-3 gap-2 md:col-span-2' />
+              </div>
+            ))}
+          </>
+        )}
+
+        <AlertaCard text='Pago de primera jornada' />
+        {formOptions.primeraJornadaFields.map(
+          ({ type, label, name, required, opcSelect }) => (
+            <InputField
+              key={name}
+              type={type}
+              label={label}
+              required={
+                formData.pagos?.[1]?.estatus === 'pagado' ? true : required
+              }
+              opcSelect={opcSelect}
+              name={`pagos.1.${name}`}
+              value={formData.pagos?.[1]?.[name] ?? ''}
+              onChange={handleNestedInputChange}
+              disabled={
+                ['total_abonado', 'monto', 'total_restante'].includes(name) ||
+                (formData.pagos?.[1]?.total_abonado >=
+                  formData.pagos?.[1]?.monto &&
+                  name === 'abono') ||
+                (formData.pagos?.[1]?.estatus === 'pagado' &&
+                  name !== 'estatus' &&
+                  name !== 'fecha_pago' &&
+                  name !== 'metodo_pago')
+                  ? true
+                  : view
+              }
+            />
+          )
+        )}
+
+        {formData.pagos?.[1]?.abono === 'SI' && (
+          <>
+            <InputField
+              type='number'
+              label='Cantidad abonada *'
+              required={true}
+              name='cantidad_abono_primera_jornada'
+              value={formData.cantidad_abono_primera_jornada ?? ''}
+              onChange={handleInputChange}
+              disabled={formData.pagos?.[1]?.estatus === 'pagado' ? true : view}
+            />
+
+            <InputField
+              type='date'
+              label='Fecha del abono *'
+              required={true}
+              name='fecha_abono_primera_jornada'
+              value={formData.fecha_abono_primera_jornada ?? ''}
+              onChange={handleInputChange}
+              disabled={formData.pagos?.[1]?.estatus === 'pagado' ? true : view}
+            />
+
+            <InputField
+              type='select'
+              label='Método de pago *'
+              required={true}
+              name='metodo_pago_abono_primera_jornada'
+              value={formData.metodo_pago_abono_primera_jornada ?? ''}
+              opcSelect={[
+                { value: '', label: 'Selecciona una opción' },
+                {
+                  value: 'transferencia bancaria',
+                  label: 'Transferencia bancaria'
+                },
+                { value: 'tarjeta', label: 'Tarjeta de crédito/débito' },
+                { value: 'efectivo', label: 'Efectivo' },
+                { value: 'cheques', label: ' Cheques' }
+              ]}
+              onChange={handleInputChange}
+              disabled={formData.pagos?.[1]?.estatus === 'pagado' ? true : view}
+            />
+          </>
+        )}
+
+        {formData.pagos?.[1]?.abonos?.length > 0 && (
+          <>
+            <AlertaCard text='Abonos de primera jornada' />
+
+            {formData.pagos[1].abonos.map((abono) => (
               <div
                 className='sm:grid-cols-1 md:col-span-2'
                 key={crypto.randomUUID()}

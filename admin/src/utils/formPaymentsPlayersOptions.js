@@ -88,7 +88,7 @@ export const formOptions = {
       ]
     }
   ],
-  equipamientoFields: [
+  primeraJornadaFields: [
     {
       required: true,
       type: 'select',

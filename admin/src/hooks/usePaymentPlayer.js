@@ -37,7 +37,7 @@ export const usePaymentPlayer = (handleInputChange) => {
   // Inicializar pagos y tipos
   useEffect(() => {
     setNestedFormData('pagos.0.tipo', 'Inscripción')
-    setNestedFormData('pagos.1.tipo', 'Equipamiento')
+    setNestedFormData('pagos.1.tipo', 'Primera jornada')
     setNestedFormData('pagos.2.tipo', 'Pesaje')
 
     // Solo establecer si no existen (para evitar sobreescribir valores)

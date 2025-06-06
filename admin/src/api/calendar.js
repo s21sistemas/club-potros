@@ -16,20 +16,10 @@ export const getPaymentsPlayers = (callback) => {
         ? pagos.find((p) => p.tipo === 'Inscripción')?.fecha_limite
         : pago.fecha_registro
 
-      const fecha_equipamiento = pagos.find((p) => p.tipo === 'Equipamiento')
-        .fecha_limite
-        ? pagos.find((p) => p.tipo === 'Equipamiento')?.fecha_limite
-        : pago.fecha_registro
-
       const ins = pagos.find((p) => p.tipo === 'Inscripción').estatus
-      const equipamiento = pagos.find((p) => p.tipo === 'Equipamiento').estatus
 
       const fecha_pago_ins = pagos.find(
         (p) => p.tipo === 'Inscripción'
-      ).fecha_pago
-
-      const fecha_pago_equipamiento = pagos.find(
-        (p) => p.tipo === 'Equipamiento'
       ).fecha_pago
 
       const categoria = doc.data().categoria
@@ -39,11 +29,8 @@ export const getPaymentsPlayers = (callback) => {
         nombre: pago.nombre,
         fecha_regis,
         fecha_ins,
-        fecha_equipamiento,
         fecha_pago_ins,
-        fecha_pago_equipamiento,
         ins,
-        equipamiento,
         categoria
       }
     })
@@ -97,30 +84,20 @@ export const getPlayersByTempCat = (temporadaId, categoria, callback) => {
       const fecha_regis = pago.fecha_registro
       const fecha_ins =
         pagos.find((p) => p.tipo === 'Inscripción')?.fecha_limite || fecha_regis
-      const fecha_equipamiento =
-        pagos.find((p) => p.tipo === 'Equipamiento')?.fecha_limite ||
-        fecha_regis
 
       const ins =
         pagos.find((p) => p.tipo === 'Inscripción')?.estatus || 'Pendiente'
-      const equipamiento =
-        pagos.find((p) => p.tipo === 'Equipamiento')?.estatus || 'Pendiente'
 
       const fecha_pago_ins =
         pagos.find((p) => p.tipo === 'Inscripción')?.fecha_pago || null
-      const fecha_pago_equipamiento =
-        pagos.find((p) => p.tipo === 'Equipamiento')?.fecha_pago || null
 
       return {
         id: doc.id,
         nombre: pago.nombre,
         fecha_regis,
         fecha_ins,
-        fecha_equipamiento,
         fecha_pago_ins,
-        fecha_pago_equipamiento,
         ins,
-        equipamiento,
         temporadaId: pago.temporadaId || null,
         categoria: pago.categoria || null
       }

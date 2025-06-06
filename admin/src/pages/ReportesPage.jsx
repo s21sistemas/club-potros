@@ -6,7 +6,7 @@ export default function ReportesPage() {
     generarReporteTransferencia,
     generarReporteNovatos,
     generarReportePagos,
-    generarReportePagosEquipamiento,
+    generarReportePagosPesaje,
     generarReporteEquipamiento
   } = useReports()
 
@@ -44,10 +44,10 @@ export default function ReportesPage() {
         </button>
 
         <button
-          onClick={generarReportePagosEquipamiento}
+          onClick={generarReportePagosPesaje}
           className='bg-teal-600 hover:bg-teal-700 text-white font-medium py-4 px-6 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 cursor-pointer'
         >
-          Reporte de pagos pendientes de equipamiento
+          Reporte de pagos pendientes de pesaje
         </button>
 
         <button

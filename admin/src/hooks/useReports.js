@@ -142,7 +142,7 @@ export const useReports = () => {
     }
   }
 
-  const obtenerPagosEquipamientoJugadores = async () => {
+  const obtenerPagosPesajeJugadores = async () => {
     try {
       const pagosJugadoresRef = collection(db, 'pagos_jugadores')
       const snapshot = await getDocs(pagosJugadoresRef)
@@ -151,8 +151,7 @@ export const useReports = () => {
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter((jugador) =>
           jugador.pagos?.some(
-            (pago) =>
-              pago.estatus === 'pendiente' && pago.tipo === 'Equipamiento'
+            (pago) => pago.estatus === 'pendiente' && pago.tipo === 'Pesaje'
           )
         )
 
@@ -512,13 +511,13 @@ export const useReports = () => {
       )
       const totalRestanteIns = montoIns - totalAbonadoIns
 
-      const montoEquipa = parseFloat(
-        pagos.find((p) => p.tipo === 'Equipamiento')?.monto
+      const montoPrimera = parseFloat(
+        pagos.find((p) => p.tipo === 'Primera jornada')?.monto
       )
-      const totalAbonadoEquipa = parseFloat(
-        pagos.find((p) => p.tipo === 'Equipamiento')?.total_abonado
+      const totalAbonadoPrimera = parseFloat(
+        pagos.find((p) => p.tipo === 'Primera jornada')?.total_abonado
       )
-      const totalRestanteEquipa = montoEquipa - totalAbonadoEquipa
+      const totalRestantePrimera = montoPrimera - totalAbonadoPrimera
 
       const montoPesaje = parseFloat(
         pagos.find((p) => p.tipo === 'Pesaje')?.monto
@@ -538,10 +537,11 @@ export const useReports = () => {
         total_abonado_ins: `$${totalAbonadoIns}`,
         total_restnate_ins: `$${totalRestanteIns}`,
 
-        equipamiento: pagos.find((p) => p.tipo === 'Equipamiento')?.estatus,
-        monto_equipa: `$${montoEquipa}`,
-        total_abonado_equipa: `$${totalAbonadoEquipa}`,
-        total_restnate_equipa: `$${totalRestanteEquipa}`,
+        primera_jornada: pagos.find((p) => p.tipo === 'Primera jornada')
+          ?.estatus,
+        monto_primera: `$${montoPrimera}`,
+        total_abonado_primera: `$${totalAbonadoPrimera}`,
+        total_restnate_primera: `$${totalRestantePrimera}`,
 
         pesaje: pagos.find((p) => p.tipo === 'Pesaje')?.estatus,
         monto_pesaje: `$${montoPesaje}`,
@@ -565,10 +565,10 @@ export const useReports = () => {
         'Monto de inscripción',
         'Total abonado de inscripción',
         'Total restante de inscripción',
-        'Equipamiento',
-        'Monto de equipamiento',
-        'Total abonado de equipamiento',
-        'Total restante de equipamiento',
+        'Primera jornada',
+        'Monto de primera jornada',
+        'Total abonado de primera jornada',
+        'Total restante de primera jornada',
         'Pesaje',
         'Monto de pesaje',
         'Total abonado de pesaje',
@@ -583,31 +583,31 @@ export const useReports = () => {
     )
   }
 
-  const generarReportePagosEquipamiento = async () => {
-    const pagosData = await obtenerPagosEquipamientoJugadores()
+  const generarReportePagosPesaje = async () => {
+    const pagosData = await obtenerPagosPesajeJugadores()
     const data = pagosData.map((pago) => {
       const pagos = pago.pagos || []
       const fecha_limite = pago.fecha_registro
         ? dayjs(pago.fecha_registro).format('DD/MM/YYYY')
         : 'Fecha no asignada'
 
-      const montoEquipa = parseFloat(
-        pagos.find((p) => p.tipo === 'Equipamiento')?.monto
+      const montoPesaje = parseFloat(
+        pagos.find((p) => p.tipo === 'Pesaje')?.monto
       )
-      const totalAbonadoEquipa = parseFloat(
-        pagos.find((p) => p.tipo === 'Equipamiento')?.total_abonado
+      const totalAbonadoPesaje = parseFloat(
+        pagos.find((p) => p.tipo === 'Pesaje')?.total_abonado
       )
-      const totalRestanteEquipa = montoEquipa - totalAbonadoEquipa
+      const totalRestantePesaje = montoPesaje - totalAbonadoPesaje
 
       return {
         temporada: pago.temporadaId.label,
         categoria: pago.categoria,
         nombre: pago.nombre,
 
-        equipamiento: pagos.find((p) => p.tipo === 'Equipamiento')?.estatus,
-        monto_equipa: `$${montoEquipa}`,
-        total_abonado_equipa: `$${totalAbonadoEquipa}`,
-        total_restnate_equipa: `$${totalRestanteEquipa}`,
+        pesaje: pagos.find((p) => p.tipo === 'Pesaje')?.estatus,
+        monto_pesaje: `$${montoPesaje}`,
+        total_abonado_pesaje: `$${totalAbonadoPesaje}`,
+        total_restnate_pesaje: `$${totalRestantePesaje}`,
 
         fecha_limite: fecha_limite,
         fecha_registro: dayjs(pago.fecha_registro).format('DD/MM/YYYY')
@@ -620,15 +620,15 @@ export const useReports = () => {
         'Temporada',
         'Categoria',
         'Jugador',
-        'Equipamiento',
-        'Monto de equipamiento',
-        'Total abonado de equipamiento',
-        'Total restante de equipamiento',
+        'Pesaje',
+        'Monto de pesaje',
+        'Total abonado de pesaje',
+        'Total restante de pesaje',
         'Fecha límite',
         'Fecha de registro'
       ],
-      'Reporte de pagos de equipo',
-      `Reporte_pagos_equipo_${dayjs().format('DD-MM-YYYY')}.xlsx`
+      'Reporte de pagos de pesaje',
+      `Reporte_pagos_pesaje_${dayjs().format('DD-MM-YYYY')}.xlsx`
     )
   }
 
@@ -1033,7 +1033,7 @@ export const useReports = () => {
     generarReporteTransferencia,
     generarReporteNovatos,
     generarReportePagos,
-    generarReportePagosEquipamiento,
+    generarReportePagosPesaje,
     generarReporteEquipamiento,
     generarReporteGastos,
     generarReporteCompras,

@@ -10,7 +10,7 @@ const columns = [
   { key: 'temporada', name: 'Temporada' },
   { key: 'categoria', name: 'Categoria' },
   { key: 'inscripcion', name: 'Costo de inscripción' },
-  { key: 'equipamiento', name: 'Costo de equipamiento' },
+  { key: 'primera_jornada', name: 'Costo de primera jornada' },
   { key: 'pesaje', name: 'Costo de pesaje' }
 ]
 

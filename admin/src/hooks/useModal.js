@@ -85,11 +85,11 @@ export const useModal = () => {
           ? formData.pagos[0]?.submonto || 0
           : data?.inscripcion || 0
 
-        const montoEquipa = parseFloat(data?.equipamiento || 0)
+        const montoPrimera = parseFloat(data?.primera_jornada || 0)
         const montoPesaje = parseFloat(data?.pesaje || 0)
 
         setFormData('pagos.0.submonto', parseFloat(subMontoIns))
-        setFormData('pagos.1.monto', montoEquipa)
+        setFormData('pagos.1.monto', montoPrimera)
         setFormData('pagos.2.monto', montoPesaje)
 
         // Descuentos
@@ -116,11 +116,11 @@ export const useModal = () => {
         if (formData.pagos?.[1]?.estatus === 'pagado') {
           setNestedFormData('pagos.1.total_restante', '0')
         } else {
-          const totalAbonoEquipa = parseFloat(
+          const totalAbonoPrimera = parseFloat(
             formData.pagos?.[1]?.total_abonado || 0
           )
-          const totalRestanteEquipa = montoEquipa - totalAbonoEquipa
-          setFormData('pagos.1.total_restante', totalRestanteEquipa)
+          const totalRestantePrimera = montoPrimera - totalAbonoPrimera
+          setFormData('pagos.1.total_restante', totalRestantePrimera)
         }
 
         if (formData.pagos?.[2]?.estatus === 'pagado') {
@@ -135,15 +135,15 @@ export const useModal = () => {
 
         // Total pendiente
         const insRestante = parseFloat(formData.pagos[0].total_restante)
-        const equipaRestante = parseFloat(formData.pagos[1].total_restante)
+        const primeraRestante = parseFloat(formData.pagos[1].total_restante)
         const pesajeRestante = parseFloat(formData.pagos[2].total_restante)
 
-        const totalPendiente = insRestante + equipaRestante + pesajeRestante
+        const totalPendiente = insRestante + primeraRestante + pesajeRestante
 
         // Total a pagar
         const montoTotal =
           parseFloat(montoActualizado) +
-          parseFloat(montoEquipa || 0) +
+          parseFloat(montoPrimera || 0) +
           parseFloat(montoPesaje || 0)
 
         // Total pagado
@@ -381,16 +381,16 @@ export const useModal = () => {
 
       const costoInscripcion =
         parseFloat(costosTemporada[0]?.inscripcion) || 500
-      const costoEquipamiento =
-        parseFloat(costosTemporada[0]?.equipamiento) || 500
+      const costoPrimera =
+        parseFloat(costosTemporada[0]?.primera_jornada) || 500
       const costoPesaje = parseFloat(costosTemporada[0]?.pesaje) || 500
-      const montoTotal = costoInscripcion + costoEquipamiento + costoPesaje
+      const montoTotal = costoInscripcion + costoPrimera + costoPesaje
 
       setFormData('pagos.0.submonto', costoInscripcion)
       setFormData('pagos.0.monto', costoInscripcion)
       setFormData('pagos.0.total_restante', costoInscripcion)
-      setFormData('pagos.1.monto', costoEquipamiento)
-      setFormData('pagos.1.total_restante', costoEquipamiento)
+      setFormData('pagos.1.monto', costoPrimera)
+      setFormData('pagos.1.total_restante', costoPrimera)
       setFormData('pagos.2.monto', costoPesaje)
       setFormData('pagos.2.total_restante', costoPesaje)
       setFormData('monto_total_pendiente', montoTotal)
@@ -448,8 +448,8 @@ export const useModal = () => {
       handleAbonoChange('cantidad_abono_ins', value, 0)
     }
 
-    if (name === 'cantidad_abono_equipamiento') {
-      handleAbonoChange('cantidad_abono_equipamiento', value, 1)
+    if (name === 'cantidad_abono_primera_jornada') {
+      handleAbonoChange('cantidad_abono_primera_jornada', value, 1)
     }
 
     if (name === 'cantidad_abono_pesaje') {
@@ -507,22 +507,22 @@ export const useModal = () => {
       setNestedFormData('pagos.0.total_restante', totalRestante)
 
       // Obtener montos de los otros pagos
-      const montoEquipamiento = parseFloat(formData.pagos[1]?.monto) || 0
+      const montoPrimeraJornada = parseFloat(formData.pagos[1]?.monto) || 0
       const montoPesaje = parseFloat(formData.pagos[2]?.monto) || 0
 
       // Calcular monto total
-      const montoTotal = montoActualizado + montoEquipamiento + montoPesaje
+      const montoTotal = montoActualizado + montoPrimeraJornada + montoPesaje
       setNestedFormData('monto_total', montoTotal)
 
       // Calcular pendiente
-      const montoEquipaPendiente =
+      const montoPrimeraPendiente =
         parseFloat(formData.pagos[1]?.total_restante) || 0
       const montoPesajePendiente =
         parseFloat(formData.pagos[2]?.total_restante) || 0
 
       // Calcular monto total
       const montoTotalPendiente =
-        totalRestante + montoEquipaPendiente + montoPesajePendiente
+        totalRestante + montoPrimeraPendiente + montoPesajePendiente
       setNestedFormData('monto_total_pendiente', montoTotalPendiente)
 
       // Calcular monto pagado
@@ -610,7 +610,7 @@ export const useModal = () => {
       // Mapear índices a los campos específicos
       const abonoFields = [
         'cantidad_abono_ins',
-        'cantidad_abono_equipamiento',
+        'cantidad_abono_primera_jornada',
         'cantidad_abono_pesaje'
       ]
 
@@ -686,14 +686,14 @@ export const useModal = () => {
       pathname === '/pagos-jugadores'
     ) {
       setFormData(
-        'cantidad_abono_equipamiento',
+        'cantidad_abono_primera_jornada',
         parseFloat(formData.pagos[1].total_restante)
       )
       setFormData(
-        'fecha_abono_equipamiento',
+        'fecha_abono_primera_jornada',
         new Date().toISOString().split('T')[0]
       )
-      setFormData('metodo_pago_abono_equipamiento', 'efectivo')
+      setFormData('metodo_pago_abono_primera_jornada', 'efectivo')
     }
 
     if (
