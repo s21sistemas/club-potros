@@ -66,8 +66,6 @@ export const useEquipamientoStore = create((set, get) => ({
         item.label.toLowerCase().replace(/\s+/g, '_')
       )
 
-      console.log(equipoNombre)
-
       const equipamientoBool = generarEquipamientoBool(equipoNombre)
 
       const newData = {

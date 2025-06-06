@@ -1,8 +1,10 @@
 import { useMemo } from 'react'
 import { useTableStore } from '../store/useTableStore'
 import dayjs from 'dayjs'
+import { useLocation } from 'react-router'
 
 export const useTable = () => {
+  const { pathname } = useLocation()
   const data = useTableStore((state) => state.data)
   const itemsPerPage = useTableStore((state) => state.itemsPerPage)
   const filterKeys = useTableStore((state) => state.filterKeys)
@@ -59,13 +61,31 @@ export const useTable = () => {
       return 'bg-[#e89b0b]'
     }
 
-    if (
-      columnKey === 'inscripcion' &&
-      item.prorroga == 'true' &&
-      limit &&
-      actually.isBefore(limit)
-    ) {
-      return 'bg-[#e89b0b]'
+    if (pathname === '/pagos-jugadores' || pathname === '/pagos-porristas') {
+      const abonoIns = item.pagos[0]?.abonos?.length
+      const abonoEquipa = item.pagos[1]?.abonos?.length
+      const abonoPesaje = item.pagos[2]?.abonos?.length
+
+      if (columnKey === 'inscripcion' && abonoIns > 0) {
+        return 'bg-gradient-to-r from-[#e89b0b] to-red-500'
+      }
+
+      if (columnKey === 'equipamiento' && abonoEquipa > 0) {
+        return 'bg-gradient-to-r from-[#e89b0b] to-red-500'
+      }
+
+      if (columnKey === 'pesaje' && abonoPesaje > 0) {
+        return 'bg-gradient-to-r from-[#e89b0b] to-red-500'
+      }
+
+      if (
+        columnKey === 'inscripcion' &&
+        item.prorroga == 'true' &&
+        limit &&
+        actually.isBefore(limit)
+      ) {
+        return 'bg-[#e89b0b]'
+      }
     }
 
     return 'bg-red-600/80'

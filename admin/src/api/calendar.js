@@ -32,6 +32,8 @@ export const getPaymentsPlayers = (callback) => {
         (p) => p.tipo === 'Equipamiento'
       ).fecha_pago
 
+      const categoria = doc.data().categoria
+
       return {
         id: doc.id,
         nombre: pago.nombre,
@@ -41,7 +43,8 @@ export const getPaymentsPlayers = (callback) => {
         fecha_pago_ins,
         fecha_pago_equipamiento,
         ins,
-        equipamiento
+        equipamiento,
+        categoria
       }
     })
     callback(data)
@@ -62,6 +65,8 @@ export const getPaymentsCheer = async (callback) => {
       const ins = pagos.find((p) => p.tipo === 'Inscripción').estatus
       const coach = pagos.find((p) => p.tipo === 'Coaching').estatus
 
+      const porristaId = doc.data().porristaId
+
       return {
         id: doc.id,
         nombre: pago.nombre,
@@ -69,7 +74,8 @@ export const getPaymentsCheer = async (callback) => {
         fecha_coach,
         fecha_regis,
         ins,
-        coach
+        coach,
+        porristaId
       }
     })
     callback(data)
@@ -91,29 +97,30 @@ export const getPlayersByTempCat = (temporadaId, categoria, callback) => {
       const fecha_regis = pago.fecha_registro
       const fecha_ins =
         pagos.find((p) => p.tipo === 'Inscripción')?.fecha_limite || fecha_regis
-      const fecha_coach =
-        pagos.find((p) => p.tipo === 'Coaching')?.fecha_limite || fecha_regis
+      const fecha_equipamiento =
+        pagos.find((p) => p.tipo === 'Equipamiento')?.fecha_limite ||
+        fecha_regis
 
       const ins =
         pagos.find((p) => p.tipo === 'Inscripción')?.estatus || 'Pendiente'
-      const coach =
-        pagos.find((p) => p.tipo === 'Coaching')?.estatus || 'Pendiente'
+      const equipamiento =
+        pagos.find((p) => p.tipo === 'Equipamiento')?.estatus || 'Pendiente'
 
       const fecha_pago_ins =
         pagos.find((p) => p.tipo === 'Inscripción')?.fecha_pago || null
-      const fecha_pago_coach =
-        pagos.find((p) => p.tipo === 'Coaching')?.fecha_pago || null
+      const fecha_pago_equipamiento =
+        pagos.find((p) => p.tipo === 'Equipamiento')?.fecha_pago || null
 
       return {
         id: doc.id,
         nombre: pago.nombre,
         fecha_regis,
         fecha_ins,
-        fecha_coach,
+        fecha_equipamiento,
         fecha_pago_ins,
-        fecha_pago_coach,
+        fecha_pago_equipamiento,
         ins,
-        coach,
+        equipamiento,
         temporadaId: pago.temporadaId || null,
         categoria: pago.categoria || null
       }

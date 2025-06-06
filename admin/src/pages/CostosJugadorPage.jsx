@@ -8,6 +8,7 @@ import { FormCostosJugadores } from '../components/modals/FormCostosJugadores'
 
 const columns = [
   { key: 'temporada', name: 'Temporada' },
+  { key: 'categoria', name: 'Categoria' },
   { key: 'inscripcion', name: 'Costo de inscripción' },
   { key: 'equipamiento', name: 'Costo de equipamiento' },
   { key: 'pesaje', name: 'Costo de pesaje' }

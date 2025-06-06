@@ -40,6 +40,9 @@ export const getPayments = async (callback) => {
     const data = snapshot.docs.map((doc) => {
       const pago = doc.data()
       const pagos = pago.pagos || []
+      const fecha_inscripcion = dayjs(doc.data().fecha_registro).format(
+        'DD/MM/YYYY'
+      )
 
       return {
         id: doc.id,
@@ -49,6 +52,7 @@ export const getPayments = async (callback) => {
         inscripcion: pagos.find((p) => p.tipo === 'Inscripción')?.estatus,
         pesaje: pagos.find((p) => p.tipo === 'Pesaje')?.estatus,
         equipamiento: pagos.find((p) => p.tipo === 'Equipamiento')?.estatus,
+        fecha_inscripcion,
         ...doc.data()
       }
     })
@@ -121,13 +125,50 @@ export const getPaymentByJugadorId = async (id) => {
   }
 }
 
+// Función para limpiar los datos de cada pago (incluyendo todos los campos undefined)
+const cleanPagoData = (pago) => {
+  // Limpiar todos los campos dentro de cada pago
+  for (const key in pago) {
+    if (pago[key] === undefined) {
+      pago[key] = null // Si el campo es undefined, lo convierte en null
+    }
+  }
+  return pago
+}
+
+// Función de limpieza general para los datos
+const cleanData = (data) => {
+  // Limpiar los datos principales del pago
+  const cleanedData = Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      value === undefined ? null : value // Convertir `undefined` a `null` en el objeto principal
+    ])
+  )
+
+  // Limpiar específicamente los pagos dentro de los datos
+  if (cleanedData.pagos) {
+    cleanedData.pagos = cleanedData.pagos.map(cleanPagoData) // Limpiar cada pago en el array `pagos`
+  }
+
+  return cleanedData
+}
+
 // Actualizar un pago
 export const updatePayment = async (id, data) => {
   try {
+    let newData = { ...data }
+
+    newData = cleanData(newData)
+
     // DATAS
     const inscripcion = data.pagos.find((p) => p.tipo === 'Inscripción')
     const pesaje = data.pagos.find((p) => p.tipo === 'Pesaje')
     const equipamiento = data.pagos.find((p) => p.tipo === 'Equipamiento')
+
+    if (newData.cambiar_inscripcion) {
+      newData.cambio_inscripcion = newData.cambiar_inscripcion
+    }
 
     // Abono de inscripción
     if (inscripcion.abono === 'SI') {
@@ -144,6 +185,15 @@ export const updatePayment = async (id, data) => {
         parseFloat(inscripcion.total_abonado || 0)
 
       inscripcion.abono = 'NO'
+
+      if (
+        parseFloat(inscripcion.total_abonado) === parseFloat(inscripcion.monto)
+      ) {
+        inscripcion.estatus = 'pagado'
+        inscripcion.fecha_pago = data.fecha_abono_ins
+        inscripcion.metodo_pago = data.metodo_pago_abono_ins
+        inscripcion.total_restante = 0
+      }
 
       // Abonos en caja
       const inscripcionPagoCaja = {
@@ -174,6 +224,13 @@ export const updatePayment = async (id, data) => {
 
       pesaje.abono = 'NO'
 
+      if (parseFloat(pesaje.total_abonado) === parseFloat(pesaje.monto)) {
+        pesaje.estatus = 'pagado'
+        pesaje.fecha_pago = data.fecha_abono_pesaje
+        pesaje.metodo_pago = data.metodo_pago_abono_pesaje
+        pesaje.total_restante = 0
+      }
+
       // Abonos en caja
       const pesajePagoCaja = {
         jugadorId: data.jugadorId,
@@ -203,6 +260,16 @@ export const updatePayment = async (id, data) => {
 
       equipamiento.abono = 'NO'
 
+      if (
+        parseFloat(equipamiento.total_abonado) ===
+        parseFloat(equipamiento.monto)
+      ) {
+        equipamiento.estatus = 'pagado'
+        equipamiento.fecha_pago = data.fecha_abono_equipamiento
+        equipamiento.metodo_pago = data.metodo_pago_abono_equipamiento
+        equipamiento.total_restante = 0
+      }
+
       // Abonos en caja
       const equipamientoPagoCaja = {
         jugadorId: data.jugadorId,
@@ -224,6 +291,8 @@ export const updatePayment = async (id, data) => {
 
     const hoy = dayjs().format('YYYY-MM-DD')
     if (inscripcion.estatus === 'pagado') {
+      inscripcion.total_restante = 0
+
       const inscripcionPago = {
         jugadorId: dataEstatus.jugadorId,
         nombre: dataEstatus.nombre,
@@ -237,6 +306,8 @@ export const updatePayment = async (id, data) => {
     }
 
     if (pesaje.estatus === 'pagado') {
+      pesaje.total_restante = 0
+
       const pesjaePago = {
         jugadorId: dataEstatus.jugadorId,
         nombre: dataEstatus.nombre,
@@ -250,6 +321,8 @@ export const updatePayment = async (id, data) => {
     }
 
     if (equipamiento.estatus === 'pagado') {
+      equipamiento.total_restante = 0
+
       const equipamientoPago = {
         jugadorId: dataEstatus.jugadorId,
         nombre: dataEstatus.nombre,
@@ -262,27 +335,29 @@ export const updatePayment = async (id, data) => {
       await createCaja(equipamientoPago)
     }
 
-    delete data.jugador
-    delete data.equipamiento
-    delete data.inscripcion
-    delete data.prorroga
-    delete data.pesaje
-    delete data.fecha_limite
+    delete newData.cambiar_inscripcion
 
-    delete data.cantidad_abono_ins
-    delete data.fecha_abono_ins
-    delete data.metodo_pago_abono_ins
+    delete newData.jugador
+    delete newData.equipamiento
+    delete newData.inscripcion
+    delete newData.prorroga
+    delete newData.pesaje
+    delete newData.fecha_limite
 
-    delete data.cantidad_abono_equipamiento
-    delete data.fecha_abono_equipamiento
-    delete data.metodo_pago_abono_equipamiento
+    delete newData.cantidad_abono_ins
+    delete newData.fecha_abono_ins
+    delete newData.metodo_pago_abono_ins
 
-    delete data.cantidad_abono_pesaje
-    delete data.fecha_abono_pesaje
-    delete data.metodo_pago_abono_pesaje
+    delete newData.cantidad_abono_equipamiento
+    delete newData.fecha_abono_equipamiento
+    delete newData.metodo_pago_abono_equipamiento
+
+    delete newData.cantidad_abono_pesaje
+    delete newData.fecha_abono_pesaje
+    delete newData.metodo_pago_abono_pesaje
 
     const dataRef = doc(db, 'pagos_jugadores', id)
-    await updateDoc(dataRef, data)
+    await updateDoc(dataRef, newData)
   } catch (error) {
     console.error('Error al actualizar pago:', error)
   }
