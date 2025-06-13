@@ -13,6 +13,43 @@ export const FormEquipamiento = () => {
   return (
     <>
       <div className='grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6'>
+        {document && (
+          <>
+            <div className='md:col-span-6 sm:col-span-6'>
+              <AlertaCard text='¿Equipo devuelto?' />
+            </div>
+
+            <InputField
+              type='select'
+              label='Selecciona si ya se devolvió el equipo *'
+              name='devuelto'
+              required={true}
+              value={formData.devuelto || ''}
+              onChange={handleInputChange}
+              disabled={view || formData.devuelto === 'SI'}
+              opcSelect={formOptions.opcSelect}
+              classInput={
+                ['SI'].includes(formData.devuelto)
+                  ? 'md:col-span-3'
+                  : 'md:col-span-6'
+              }
+            />
+
+            {formData.devuelto === 'SI' && (
+              <InputField
+                type='date'
+                label='Fecha en la que se devolvió el equipo *'
+                name='fecha_devuelto'
+                required={true}
+                disabled={view}
+                value={formData.fecha_devuelto || ''}
+                onChange={handleInputChange}
+                classInput='md:col-span-3'
+              />
+            )}
+          </>
+        )}
+
         <div className='md:col-span-6 sm:col-span-6'>
           <AlertaCard text='Jugador' />
         </div>
@@ -55,10 +92,9 @@ export const FormEquipamiento = () => {
         ))}
 
         <div className='md:col-span-6 sm:col-span-6'>
-          <AlertaCard text='Rellenar los datos si es que aplica' />
+          <AlertaCard text='Datos del casco' />
         </div>
-
-        {formOptions.aplicaFields.map(
+        {formOptions.cascoFields.map(
           ({ type, label, name, required, opcSelect }) => (
             <InputField
               key={name}
@@ -75,41 +111,64 @@ export const FormEquipamiento = () => {
           )
         )}
 
-        {document && (
-          <>
-            <div className='md:col-span-6 sm:col-span-6'>
-              <AlertaCard text='¿Equipo devuelto?' />
-            </div>
-
+        <div className='md:col-span-6 sm:col-span-6'>
+          <AlertaCard text='Datos de las hombreras' />
+        </div>
+        {formOptions.hombrerasFields.map(
+          ({ type, label, name, required, opcSelect }) => (
             <InputField
-              type='select'
-              label='Selecciona si ya se devolvió el equipo *'
-              name='devuelto'
-              required={true}
-              value={formData.devuelto || ''}
+              key={name}
+              type={type}
+              label={label}
+              name={name}
+              required={required}
+              value={formData[name] || ''}
+              opcSelect={opcSelect}
               onChange={handleInputChange}
               disabled={view || formData.devuelto === 'SI'}
-              opcSelect={formOptions.opcSelect}
-              classInput={
-                ['SI'].includes(formData.devuelto)
-                  ? 'md:col-span-3'
-                  : 'md:col-span-6'
-              }
+              classInput='md:col-span-3'
             />
+          )
+        )}
 
-            {formData.devuelto === 'SI' && (
-              <InputField
-                type='date'
-                label='Fecha en la que se devolvió el equipo *'
-                name='fecha_devuelto'
-                required={true}
-                disabled={view}
-                value={formData.fecha_devuelto || ''}
-                onChange={handleInputChange}
-                classInput='md:col-span-3'
-              />
-            )}
-          </>
+        <div className='md:col-span-6 sm:col-span-6'>
+          <AlertaCard text='Datos del jersey' />
+        </div>
+        {formOptions.jerseyFields.map(
+          ({ type, label, name, required, opcSelect }) => (
+            <InputField
+              key={name}
+              type={type}
+              label={label}
+              name={name}
+              required={required}
+              value={formData[name] || ''}
+              opcSelect={opcSelect}
+              onChange={handleInputChange}
+              disabled={view || formData.devuelto === 'SI'}
+              classInput='md:col-span-3'
+            />
+          )
+        )}
+
+        <div className='md:col-span-6 sm:col-span-6'>
+          <AlertaCard text='Datos de la funda' />
+        </div>
+        {formOptions.fundaFields.map(
+          ({ type, label, name, required, opcSelect }) => (
+            <InputField
+              key={name}
+              type={type}
+              label={label}
+              name={name}
+              required={required}
+              value={formData[name] || ''}
+              opcSelect={opcSelect}
+              onChange={handleInputChange}
+              disabled={view || formData.devuelto === 'SI'}
+              classInput='md:col-span-3'
+            />
+          )
         )}
       </div>
       {view ? <CancelButtonModal /> : <ButtonsModal />}

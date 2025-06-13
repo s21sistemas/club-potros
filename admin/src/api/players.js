@@ -190,7 +190,6 @@ const createPagoJugador = async (
       {
         tipo: 'Inscripción',
         beca: '0',
-        descuento: '0',
         estatus: 'pendiente',
         fecha_pago: null,
         submonto: costoInscripcion,
@@ -205,8 +204,10 @@ const createPagoJugador = async (
       {
         tipo: 'Primera jornada',
         estatus: 'pendiente',
+        descuento: '0',
         fecha_pago: null,
-        fecha_limite: null,
+        fecha_limite: dateWeek,
+        submonto: costoPrimeraJornada,
         monto: costoPrimeraJornada,
         metodo_pago: null,
         abono: 'NO',
@@ -217,6 +218,7 @@ const createPagoJugador = async (
         tipo: 'Pesaje',
         estatus: 'pendiente',
         fecha_pago: null,
+        fecha_limite: dateWeek,
         monto: costoPesaje,
         metodo_pago: null,
         abono: 'NO',

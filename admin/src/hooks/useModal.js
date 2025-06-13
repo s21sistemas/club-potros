@@ -85,22 +85,29 @@ export const useModal = () => {
           ? formData.pagos[0]?.submonto || 0
           : data?.inscripcion || 0
 
-        const montoPrimera = parseFloat(data?.primera_jornada || 0)
+        const submontoPrimera = parseFloat(data?.primera_jornada || 0)
         const montoPesaje = parseFloat(data?.pesaje || 0)
 
         setFormData('pagos.0.submonto', parseFloat(subMontoIns))
-        setFormData('pagos.1.monto', montoPrimera)
+        setFormData('pagos.1.submonto', submontoPrimera)
         setFormData('pagos.2.monto', montoPesaje)
 
-        // Descuentos
+        // Descuentos inscripción
         const submonto = parseFloat(formData.pagos[0]?.submonto || 0)
-        const descuento = parseFloat(formData.pagos[0]?.descuento || 0)
         const beca = parseFloat(formData.pagos[0]?.beca || 0)
 
-        // Calcular monto con descuento y beca
+        // Calcular monto con beca
         const becaAplicada = submonto * (beca / 100)
-        const montoActualizado = submonto - descuento - becaAplicada
+        const montoActualizado = submonto - becaAplicada
         setFormData('pagos.0.monto', montoActualizado || 0)
+
+        // Descuentos primera jornada
+        const submontoPrim = parseFloat(formData.pagos[1]?.submonto || 0)
+        const descuentoPrim = parseFloat(formData.pagos[1]?.descuento || 0)
+
+        // Calcular monto con descuento
+        const montoActualizadoPrim = submontoPrim - descuentoPrim
+        setFormData('pagos.1.monto', montoActualizadoPrim || 0)
 
         // Calculos de los restantes totales
         if (formData.pagos?.[0]?.estatus === 'pagado') {
@@ -119,7 +126,7 @@ export const useModal = () => {
           const totalAbonoPrimera = parseFloat(
             formData.pagos?.[1]?.total_abonado || 0
           )
-          const totalRestantePrimera = montoPrimera - totalAbonoPrimera
+          const totalRestantePrimera = montoActualizadoPrim - totalAbonoPrimera
           setFormData('pagos.1.total_restante', totalRestantePrimera)
         }
 
@@ -143,7 +150,7 @@ export const useModal = () => {
         // Total a pagar
         const montoTotal =
           parseFloat(montoActualizado) +
-          parseFloat(montoPrimera || 0) +
+          parseFloat(montoActualizadoPrim || 0) +
           parseFloat(montoPesaje || 0)
 
         // Total pagado
@@ -471,11 +478,7 @@ export const useModal = () => {
     const { name, value } = e.target
     setNestedFormData(name, value)
 
-    if (
-      name === 'pagos.0.submonto' ||
-      name === 'pagos.0.descuento' ||
-      name === 'pagos.0.beca'
-    ) {
+    if (name === 'pagos.0.submonto' || name === 'pagos.0.beca') {
       setNestedFormData(name, value)
 
       // Obtener valores actualizados
@@ -484,19 +487,14 @@ export const useModal = () => {
           ? parseFloat(value) || 0
           : parseFloat(formData.pagos[0]?.submonto) || 0
 
-      const descuento =
-        name === 'pagos.0.descuento'
-          ? parseFloat(value) || 0
-          : parseFloat(formData.pagos[0]?.descuento) || 0
-
       const beca =
         name === 'pagos.0.beca'
           ? parseFloat(value) || 0
           : parseFloat(formData.pagos[0]?.beca) || 0
 
-      // Calcular monto con descuento y beca
+      // Calcular monto con beca
       const becaAplicada = submonto * (beca / 100)
-      const montoActualizado = submonto - descuento - becaAplicada
+      const montoActualizado = submonto - becaAplicada
 
       // Actualizar el monto del primer pago
       setNestedFormData('pagos.0.monto', montoActualizado)
@@ -528,7 +526,53 @@ export const useModal = () => {
       // Calcular monto pagado
       const montoTotalPagado = montoTotal - montoTotalPendiente
       setNestedFormData('monto_total_pagado', montoTotalPagado)
-    } else if (name.startsWith('pagos.') && name.endsWith('.estatus')) {
+    }
+
+    if (name === 'pagos.1.descuento') {
+      setNestedFormData(name, value)
+
+      console.log(name, value)
+
+      // Obtener valores actualizados
+      const submonto = formData.pagos[1]?.submonto || 0
+      const descuento = parseFloat(value) || 0
+
+      // Calcular monto con descuento
+      const montoActualizado = submonto - descuento
+
+      // Actualizar el monto del primer pago
+      setNestedFormData('pagos.1.monto', montoActualizado)
+
+      // Actualizar total restante
+      const totalRestante =
+        montoActualizado - parseFloat(formData?.pagos[1]?.total_abonado || 0)
+      setNestedFormData('pagos.1.total_restante', totalRestante)
+
+      // Obtener montos de los otros pagos
+      const montoIns = parseFloat(formData.pagos[0]?.monto) || 0
+      const montoPesaje = parseFloat(formData.pagos[2]?.monto) || 0
+
+      // Calcular monto total
+      const montoTotal = montoActualizado + montoIns + montoPesaje
+      setNestedFormData('monto_total', montoTotal)
+
+      // Calcular pendiente
+      const montoInsPendiente =
+        parseFloat(formData.pagos[0]?.total_restante) || 0
+      const montoPesajePendiente =
+        parseFloat(formData.pagos[2]?.total_restante) || 0
+
+      // Calcular monto total
+      const montoTotalPendiente =
+        totalRestante + montoInsPendiente + montoPesajePendiente
+      setNestedFormData('monto_total_pendiente', montoTotalPendiente)
+
+      // Calcular monto pagado
+      const montoTotalPagado = montoTotal - montoTotalPendiente
+      setNestedFormData('monto_total_pagado', montoTotalPagado)
+    }
+
+    if (name.startsWith('pagos.') && name.endsWith('.estatus')) {
       // Actualizamos el campo editado
       setNestedFormData(name, value)
 
@@ -562,7 +606,9 @@ export const useModal = () => {
       setNestedFormData('monto_total', montoTotal)
       setNestedFormData('monto_total_pagado', totalPagado)
       setNestedFormData('monto_total_pendiente', totalPendiente)
-    } else if (name.startsWith('pagos.') && name.endsWith('.monto')) {
+    }
+
+    if (name.startsWith('pagos.') && name.endsWith('.monto')) {
       setNestedFormData(name, value)
 
       const updatedPagos = [...formData.pagos].map((pago, index) => {
@@ -599,7 +645,9 @@ export const useModal = () => {
       setNestedFormData('monto_total', montoTotal)
       setNestedFormData('monto_total_pagado', totalPagado)
       setNestedFormData('monto_total_pendiente', totalPendiente)
-    } else if (
+    }
+
+    if (
       name.startsWith('pagos.') &&
       name.endsWith('.abono') &&
       value === 'NO' &&

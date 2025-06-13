@@ -1,91 +1,69 @@
-import { PDFDocument, StandardFonts } from 'pdf-lib'
-import download from 'downloadjs'
-import { getPlayerById } from '../api/players'
+import { getPlayerById, getUserByUID } from '../api/players'
+import { getArticuloById } from '../api/articulos'
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/es'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { HOST } from '../config'
 
 dayjs.locale('es')
 dayjs.extend(customParseFormat)
 
-import reglamento from '../assets/docs/equipamiento.pdf'
-
 export const usePDFEquipamiento = () => {
   const downloadPDFEquipamiento = async (data) => {
-    const existingPdfBytes = await fetch(reglamento).then((res) =>
-      res.arrayBuffer()
-    )
-
-    const pdfDoc = await PDFDocument.load(existingPdfBytes)
-    const pages = pdfDoc.getPages()
-    const firstPage = pages[0]
-
-    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-
-    const drawText = (text, x, y) => {
-      firstPage.drawText(text, {
-        x,
-        y,
-        size: 10,
-        font
-      })
-    }
-
-    const drawTextFecha = (text, x, y) => {
-      firstPage.drawText(text, {
-        x,
-        y,
-        size: 11,
-        font
-      })
-    }
-
     const player = await getPlayerById(data.jugadorId.value)
-    const fecha = dayjs(data.fecha_asignacion, 'DD/MM/YYYY').format(
-      'D [de] MMMM [de] YYYY'
+    const tutor = await getUserByUID(player.uid.value)
+
+    const edad = dayjs().diff(player.fecha_nacimiento, 'year')
+
+    const preciosReposicion = await Promise.all(
+      data.equipamiento_asignado.map(async (item) => {
+        if (!item.value) return 0
+        try {
+          const articulo = await getArticuloById(item.value)
+          return articulo?.precio_reposicion
+            ? parseFloat(articulo.precio_reposicion)
+            : 0
+        } catch (e) {
+          console.error(`Error al obtener artículo para reposición`, e)
+          return 0
+        }
+      })
     )
 
-    drawText(data.jugador, 258, 675)
-    drawText(player.categoria, 258, 643)
-    drawText(player.temporadaId?.label || 'NA', 258, 609)
-    drawText(player.direccion, 258, 574)
-    drawText(player.telefono, 258, 543)
-    drawText(player.uid.label, 258, 514)
-    drawText(fecha, 258, 481)
+    const totalReposicion = preciosReposicion.reduce(
+      (acc, precio) => acc + precio,
+      0
+    )
 
-    const drawWrappedText = (text, x, y, maxWidth, lineHeight) => {
-      const words = text.split(' ')
-      let line = ''
-      let offsetY = 0
-
-      for (let i = 0; i < words.length; i++) {
-        const testLine = line + words[i] + ' '
-        const testWidth = font.widthOfTextAtSize(testLine, 10)
-
-        if (testWidth > maxWidth && i > 0) {
-          drawText(line.trim(), x, y - offsetY)
-          line = words[i] + ' '
-          offsetY += lineHeight
-        } else {
-          line = testLine
-        }
-      }
-
-      if (line) {
-        drawText(line.trim(), x, y - offsetY)
-      }
+    const info = {
+      temporada: player.temporadaId.label,
+      categoria: player.categoria,
+      numero_jersey: data.numero || 'N/A',
+      nombre_jugador: data.jugador,
+      fecha_nacimiento: player.fecha_nacimiento,
+      edad,
+      domicilio: player.direccion,
+      nombre_responsable: tutor.nombre_completo,
+      telefono_responsable: tutor.celular,
+      casco_serie: data.numero_serie_casco || 'N/A',
+      casco_marca: data.marca_casco || 'N/A',
+      casco_equipo: data.equipo_casco || 'N/A',
+      hombreras_serie: data.numero_serie_hombreras || 'N/A',
+      hombreras_marca: data.marca_hombreras || 'N/A',
+      hombreras_equipo: data.equipo_hombreras || 'N/A',
+      jersey_tipo: data.tipo_jersey || 'N/A',
+      jersey_talla: data.talla_jersey || 'N/A',
+      jersey_equipo: data.equipo_jersey || 'N/A',
+      fundas_talla: data.talla_funda || 'N/A',
+      fundas_equipo: data.equipo_funda || 'N/A',
+      reposicion: totalReposicion,
+      fecha_equipamiento: data.fecha_asignacion
     }
 
-    drawWrappedText(data.equipo_prestado, 215, 387, 250, 14)
-
-    drawTextFecha(dayjs().format('D [de] MMMM [de] YYYY'), 235, 106)
-
-    const nombreDocumento = `pagare_equipamiento_${dayjs().format(
-      'DD-MM-YYYY'
-    )}.pdf`
-    const pdfBytes = await pdfDoc.save()
-    download(pdfBytes, nombreDocumento, 'application/pdf')
+    const params = new URLSearchParams(info).toString()
+    const url = `${HOST}/pdf/equipamiento?${params}`
+    window.open(url, '_blank')
   }
 
   return { downloadPDFEquipamiento }

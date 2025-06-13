@@ -30,7 +30,6 @@ export const useEquipamiento = () => {
   )
   const getDataEquipo = useEquipamientoStore((state) => state.getDataEquipo)
 
-  // Inicializar pagos y tipos
   useEffect(() => {
     if (!formData.numero_serie_casco) {
       setFormData('numero_serie_casco', null)

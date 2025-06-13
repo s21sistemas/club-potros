@@ -527,6 +527,14 @@ export const useReports = () => {
       )
       const totalRestantePesaje = montoPesaje - totalAbonadoPesaje
 
+      // Verificar si registraron jugadores en una app anterior
+      const anteriorApp = pagos.find((p) => p.tipo === 'Equipamiento')
+      const condicioanApp = !!anteriorApp
+      const textoApp = 'Registro guardado en una app anterior'
+      const primeraJornada = pagos.find(
+        (p) => p.tipo === 'Primera jornada'
+      )?.estatus
+
       return {
         temporada: pago.temporadaId.label,
         categoria: pago.categoria,
@@ -535,18 +543,21 @@ export const useReports = () => {
         inscripcion: pagos.find((p) => p.tipo === 'Inscripción')?.estatus,
         monto_ins: `$${montoIns}`,
         total_abonado_ins: `$${totalAbonadoIns}`,
-        total_restnate_ins: `$${totalRestanteIns}`,
+        total_restante_ins: `$${totalRestanteIns}`,
 
-        primera_jornada: pagos.find((p) => p.tipo === 'Primera jornada')
-          ?.estatus,
-        monto_primera: `$${montoPrimera}`,
-        total_abonado_primera: `$${totalAbonadoPrimera}`,
-        total_restnate_primera: `$${totalRestantePrimera}`,
+        primera_jornada: condicioanApp ? textoApp : primeraJornada,
+        monto_primera: condicioanApp ? textoApp : `$${montoPrimera}`,
+        total_abonado_primera: condicioanApp
+          ? textoApp
+          : `$${totalAbonadoPrimera}`,
+        total_restante_primera: condicioanApp
+          ? textoApp
+          : `$${totalRestantePrimera}`,
 
         pesaje: pagos.find((p) => p.tipo === 'Pesaje')?.estatus,
         monto_pesaje: `$${montoPesaje}`,
         total_abonado_pesaje: `$${totalAbonadoPesaje}`,
-        total_restnate_pesaje: `$${totalRestantePesaje}`,
+        total_restante_pesaje: `$${totalRestantePesaje}`,
 
         monto_total_pagado: `$${pago.monto_total_pagado}`,
         monto_total_pendiente: `$${pago.monto_total_pendiente}`,
@@ -607,7 +618,7 @@ export const useReports = () => {
         pesaje: pagos.find((p) => p.tipo === 'Pesaje')?.estatus,
         monto_pesaje: `$${montoPesaje}`,
         total_abonado_pesaje: `$${totalAbonadoPesaje}`,
-        total_restnate_pesaje: `$${totalRestantePesaje}`,
+        total_restante_pesaje: `$${totalRestantePesaje}`,
 
         fecha_limite: fecha_limite,
         fecha_registro: dayjs(pago.fecha_registro).format('DD/MM/YYYY')

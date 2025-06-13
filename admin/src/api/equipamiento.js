@@ -9,12 +9,21 @@ import {
 } from 'firebase/firestore'
 import { db } from './db/firebaseConfig'
 import { restarStockAlmacen, sumarStockAlmacen } from './almacen'
+import dayjs from 'dayjs'
+import { mapearEquipamientoAsignado } from '../helpers/equipamiento'
 
 const equipamientoCollection = collection(db, 'equipamiento')
 
 // Crear un equipamiento
 export const createEquipamiento = async (data) => {
   try {
+    data.equipamiento_asignado = mapearEquipamientoAsignado(
+      data.equipamiento_asignado,
+      data
+    )
+    data.fecha_asignacion = dayjs().format('DD/MM/YYYY')
+    data.devuelto = 'NO'
+
     const stockRestado = await restarStockAlmacen(data.equipamiento_asignado)
 
     if (!stockRestado) return null
@@ -34,9 +43,8 @@ export const getEquipamiento = async (callback) => {
       const docData = doc.data()
 
       const jugador = docData?.jugadorId?.label || 'Sin asignar'
-      const equipo_prestado = Object.entries(docData)
-        .filter(([key, value]) => value === true && key !== 'devuelto')
-        .map(([key]) => key.replace(/_/g, ' '))
+      const equipo_prestado = docData.equipamiento_asignado
+        .map((item) => item.label)
         .join(', ')
 
       return {
@@ -53,6 +61,11 @@ export const getEquipamiento = async (callback) => {
 // Actualizar un equipamiento
 export const updateEquipamiento = async (id, data) => {
   try {
+    data.equipamiento_asignado = mapearEquipamientoAsignado(
+      data.equipamiento_asignado,
+      data
+    )
+
     // Obtener el equipamiento actual antes de actualizar
     const dataRef = doc(db, 'equipamiento', id)
     const snapshot = await getDoc(dataRef)

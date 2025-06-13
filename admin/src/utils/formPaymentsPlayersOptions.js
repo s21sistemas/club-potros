@@ -3,12 +3,6 @@ export const formOptions = {
     { required: true, type: 'number', label: 'Beca (%) *', name: 'beca' },
     {
       required: true,
-      type: 'number',
-      label: 'Descuento por equipo propio ($) *',
-      name: 'descuento'
-    },
-    {
-      required: true,
       type: 'select',
       label: 'Estatus *',
       name: 'estatus',
@@ -89,6 +83,18 @@ export const formOptions = {
     }
   ],
   primeraJornadaFields: [
+    {
+      required: true,
+      type: 'number',
+      label: 'Descuento por equipo propio ($) *',
+      name: 'descuento'
+    },
+    {
+      required: true,
+      type: 'number',
+      label: 'Submonto *',
+      name: 'submonto'
+    },
     {
       required: true,
       type: 'select',

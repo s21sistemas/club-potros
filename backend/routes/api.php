@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CorreoController;
+use App\Http\Controllers\PdfController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,4 @@ use App\Http\Controllers\CorreoController;
 
 Route::post('/enviar-correo', [CorreoController::class, 'enviar']);
 Route::post('/agregar-usuario', [CorreoController::class, 'agregarUsuario']);
+Route::get('/pdf/equipamiento', [PdfController::class, 'equipamiento']);

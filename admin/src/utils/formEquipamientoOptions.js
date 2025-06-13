@@ -18,7 +18,7 @@ export const formOptions = {
     {
       required: true,
       type: 'text',
-      label: 'Número del equipamiento *',
+      label: 'Número del jersey *',
       name: 'numero'
     },
     {
@@ -33,7 +33,7 @@ export const formOptions = {
     { value: 'SI', label: 'SI' },
     { value: 'NO', label: 'NO' }
   ],
-  aplicaFields: [
+  cascoFields: [
     {
       required: false,
       type: 'text',
@@ -43,9 +43,47 @@ export const formOptions = {
     {
       required: false,
       type: 'text',
+      label: 'Marca del casco',
+      name: 'marca_casco'
+    },
+    {
+      required: false,
+      type: 'select',
+      label: 'Tipo de equipo',
+      name: 'equipo_casco',
+      opcSelect: [
+        { value: '', label: 'Selecciona una opción' },
+        { value: 'Propio', label: 'Propio' },
+        { value: 'Prestado', label: 'Prestado' }
+      ]
+    }
+  ],
+  hombrerasFields: [
+    {
+      required: false,
+      type: 'text',
       label: 'Número de serie de las hombreras',
       name: 'numero_serie_hombreras'
     },
+    {
+      required: false,
+      type: 'text',
+      label: 'Marca de las hombreras',
+      name: 'marca_hombreras'
+    },
+    {
+      required: false,
+      type: 'select',
+      label: 'Tipo de equipo',
+      name: 'equipo_hombreras',
+      opcSelect: [
+        { value: '', label: 'Selecciona una opción' },
+        { value: 'Propio', label: 'Propio' },
+        { value: 'Prestado', label: 'Prestado' }
+      ]
+    }
+  ],
+  jerseyFields: [
     {
       required: false,
       type: 'text',
@@ -71,6 +109,19 @@ export const formOptions = {
     },
     {
       required: false,
+      type: 'select',
+      label: 'Tipo de equipo',
+      name: 'equipo_jersey',
+      opcSelect: [
+        { value: '', label: 'Selecciona una opción' },
+        { value: 'Propio', label: 'Propio' },
+        { value: 'Prestado', label: 'Prestado' }
+      ]
+    }
+  ],
+  fundaFields: [
+    {
+      required: false,
       type: 'text',
       label: 'Número de serie de la funda',
       name: 'numero_serie_funda'
@@ -80,6 +131,17 @@ export const formOptions = {
       type: 'text',
       label: 'Talla de la funda',
       name: 'talla_funda'
+    },
+    {
+      required: false,
+      type: 'select',
+      label: 'Tipo de equipo',
+      name: 'equipo_funda',
+      opcSelect: [
+        { value: '', label: 'Selecciona una opción' },
+        { value: 'Propio', label: 'Propio' },
+        { value: 'Prestado', label: 'Prestado' }
+      ]
     }
   ]
 }

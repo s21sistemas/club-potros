@@ -6,8 +6,6 @@ import {
   removeEquipamiento,
   updateEquipamiento
 } from '../api/equipamiento'
-import dayjs from 'dayjs'
-import { generarEquipamientoBool } from '../utils/auxiliarEquipamiento'
 import { getEquipo } from '../api/articulos'
 
 let unsubscribeEquipo = null
@@ -62,20 +60,7 @@ export const useEquipamientoStore = create((set, get) => ({
 
   addEquipamiento: async (data) => {
     try {
-      const equipoNombre = data.equipamiento_asignado.map((item) =>
-        item.label.toLowerCase().replace(/\s+/g, '_')
-      )
-
-      const equipamientoBool = generarEquipamientoBool(equipoNombre)
-
-      const newData = {
-        ...data,
-        ...equipamientoBool,
-        devuelto: 'NO',
-        fecha_asignacion: dayjs().format('DD/MM/YYYY')
-      }
-
-      const id = await createEquipamiento(newData)
+      const id = await createEquipamiento(data)
       if (!id) throw new Error('No se pudo guardar el registro')
 
       toast.success('Registro creado correctamente')
@@ -87,19 +72,7 @@ export const useEquipamientoStore = create((set, get) => ({
 
   editEquipamiento: async (data) => {
     try {
-      const equipoNombre = data.equipamiento_asignado.map((item) =>
-        item.label.toLowerCase().replace(/\s+/g, '_')
-      )
-
-      const equipamientoBool = generarEquipamientoBool(equipoNombre)
-
-      const newData = {
-        ...data,
-        ...equipamientoBool,
-        fecha_asignacion: dayjs().format('DD/MM/YYYY')
-      }
-
-      const success = await updateEquipamiento(newData.id, newData)
+      const success = await updateEquipamiento(data.id, data)
       if (!success) throw new Error('No se pudo guardar el registro')
 
       toast.success('Actualizado correctamente')
